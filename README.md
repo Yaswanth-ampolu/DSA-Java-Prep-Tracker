@@ -21,7 +21,7 @@ This repository is a documentation of my journey through the "DSA Bootcamp." It 
 This entire journey is based on the legendary playlist by **Kunal Kushwaha**.
 * **Source:** [Java + DSA + Interview Preparation Course](https://youtube.com/playlist?list=PL9gnSGHSqcnr_DxHsP7AW9ftq0AtAyYqJ&si=tOVfKOSmgyA7awe1)
 
-* **Github:** [Kunal Kushwaga](https://github.com/kunal-kushwaha) @kunal-kushwaha
+* **Github:** [Kunal Kushwaha](https://github.com/kunal-kushwaha) @kunal-kushwaha
 
 Big thanks to Kunal for providing high-quality, free education to the community! 🙌
 
