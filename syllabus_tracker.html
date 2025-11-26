@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA & Java Bootcamp Tracker</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --text-color: #333;
+            --container-bg: #ffffff;
+            --header-bg: #6200ea;
+            --header-text: #ffffff;
+            --border-color: #e0e0e0;
+            --hover-color: #f0f0f5;
+            --link-color: #6200ea;
+            --link-bg: #ede7f6;
+            --success-color: #4caf50;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --container-bg: #1e1e1e;
+            --header-bg: #3700b3;
+            --header-text: #ffffff;
+            --border-color: #333;
+            --hover-color: #2c2c2c;
+            --link-color: #bb86fc;
+            --link-bg: #2d2d2d;
+            --success-color: #03dac6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: var(--container-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--link-color);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            cursor: pointer;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .theme-btn {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+        }
+
+        .action-btn {
+            background-color: var(--border-color);
+            color: var(--text-color);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--success-color);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .progress-text {
+            text-align: right;
+            font-size: 0.9rem;
+            margin-top: -1.5rem;
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .topic-item {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .topic-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 10px;
+            transition: background 0.2s;
+        }
+
+        .topic-content:hover {
+            background-color: var(--hover-color);
+            border-radius: 6px;
+        }
+
+        .topic-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--success-color);
+        }
+
+        label {
+            cursor: pointer;
+            font-size: 1.05rem;
+            line-height: 1.4;
+        }
+
+        /* Completed State Style */
+        .completed label {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .video-link {
+            text-decoration: none;
+            color: var(--link-color);
+            background-color: var(--link-bg);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        
+        /* Compact video links for small screens */
+        @media (max-width: 480px) {
+            .video-link::after {
+                content: '';
+            }
+        }
+
+        .video-link:hover {
+            opacity: 0.8;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            cursor: pointer;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+
+        .section-header:hover {
+            background-color: var(--hover-color);
+            border-radius: 6px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--link-color);
+        }
+
+        .section-toggle {
+            font-size: 1rem;
+            color: var(--text-color);
+            transition: transform 0.2s;
+        }
+
+        .section-content {
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
+        }
+
+        .section-content.collapsed {
+            max-height: 0;
+        }
+
+        /* Nested Lists */
+        ul ul {
+            padding-left: 2rem;
+            border-left: 2px solid var(--border-color);
+            margin-left: 10px;
+        }
+        
+        ul ul .topic-item {
+            border-bottom: none;
+        }
+
+        ul ul .topic-content {
+            padding: 8px 10px;
+        }
+
+        ul ul label {
+            font-size: 0.95rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                margin: 0.5rem;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            h1 {
+                font-size: 1.4rem;
+                text-align: center;
+                line-height: 1.3;
+            }
+            
+            .controls {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                width: 100%;
+            }
+            
+            button {
+                padding: 10px 12px;
+                font-size: 0.85rem;
+                min-height: 44px;
+            }
+            
+            .progress-text {
+                text-align: center;
+                margin-top: -1rem;
+            }
+            
+            .section-header {
+                padding: 10px 8px;
+            }
+            
+            .section-title {
+                font-size: 1.1rem;
+                line-height: 1.3;
+            }
+            
+            .topic-content {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                padding: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .topic-left {
+                gap: 8px;
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .video-link {
+                margin-left: 0;
+                padding: 6px 10px;
+                font-size: 0.75rem;
+                min-height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                white-space: nowrap;
+            }
+            
+            label {
+                font-size: 0.9rem;
+                line-height: 1.3;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            
+            ul ul {
+                padding-left: 1.2rem;
+                margin-left: 5px;
+            }
+            
+            input[type="checkbox"] {
+                width: 20px;
+                height: 20px;
+            }
+            
+            label {
+                font-size: 1rem;
+                line-height: 1.4;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+                padding: 0.75rem;
+            }
+            
+            h1 {
+                font-size: 1.2rem;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+            
+            button {
+                padding: 12px;
+                font-size: 0.8rem;
+            }
+            
+            .section-title {
+                font-size: 1rem;
+            }
+            
+            .topic-content {
+                padding: 6px 4px;
+                gap: 6px;
+            }
+            
+            .topic-left {
+                gap: 6px;
+            }
+            
+            ul ul {
+                padding-left: 1rem;
+                margin-left: 2px;
+            }
+            
+            .video-link {
+                padding: 5px 8px;
+                font-size: 0.7rem;
+                min-height: 28px;
+            }
+            
+            label {
+                font-size: 0.85rem;
+            }
+            
+            input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            h1 {
+                font-size: 1.1rem;
+            }
+            
+            .section-header {
+                padding: 8px 4px;
+            }
+            
+            .topic-content {
+                padding: 4px 2px;
+                gap: 4px;
+            }
+            
+            .video-link {
+                padding: 3px 5px;
+                font-size: 0.6rem;
+                min-height: 22px;
+                border-radius: 3px;
+            }
+            
+            label {
+                font-size: 0.8rem;
+            }
+            
+            input[type="checkbox"] {
+                width: 16px;
+                height: 16px;
+            }
+        }
+        
+        /* Large screens */
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1100px;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .section-header {
+                padding: 14px 10px;
+            }
+            
+            .topic-content {
+                padding: 12px 10px;
+            }
+            
+            button {
+                min-height: 48px;
+                padding: 12px 16px;
+            }
+            
+            .video-link {
+                min-height: 44px;
+                padding: 10px 14px;
+            }
+            
+            input[type="checkbox"] {
+                width: 22px;
+                height: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>DSA + Java Course Tracker</h1>
+        <div class="controls">
+            <button class="action-btn" onclick="exportProgress()">Save File</button>
+            <input type="file" id="importFile" style="display:none" onchange="importProgress(this)">
+            <button class="action-btn" onclick="document.getElementById('importFile').click()">Load File</button>
+            <button class="action-btn" onclick="toggleAllSections()">Collapse All</button>
+            <button class="theme-btn" onclick="toggleTheme()">🌗 Theme</button>
+        </div>
+    </header>
+
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText">0% Completed</div>
+
+    <div id="syllabus-root">
+        </div>
+</div>
+
+<script>
+    // Data Structure representing the Syllabus
+    const syllabusData = [
+        { title: "Complete Git & GitHub Course", link: "https://youtu.be/apGV9Kg7ics" },
+        { 
+            title: "Introduction to Programming", link: "https://youtu.be/wn49bJOYAZM",
+            subtopics: [
+                { title: "Types of languages", link: "https://youtu.be/wn49bJOYAZM?t=171" },
+                { title: "Memory management", link: "https://youtu.be/wn49bJOYAZM?t=1488" }
+            ]
+        },
+        {
+            title: "Flow of the program", link: "https://youtu.be/lhELGQAV4gg",
+            subtopics: [
+                { title: "Flowcharts", link: "https://youtu.be/lhELGQAV4gg" },
+                { title: "Pseudocode", link: "https://youtu.be/lhELGQAV4gg?t=715" }
+            ]
+        },
+        {
+            title: "Introduction to Java", link: "https://youtu.be/4EP8YzcN0hQ",
+            subtopics: [
+                { title: "Introduction", link: "https://youtu.be/4EP8YzcN0hQ" },
+                { title: "How it works", link: "https://youtu.be/4EP8YzcN0hQ?t=93" },
+                { title: "Setup Installation", link: "https://youtu.be/4EP8YzcN0hQ?t=1486" },
+                { title: "Input and Output in Java", link: "https://youtu.be/TAtrPoaJ7gc" },
+                { 
+                    title: "Conditionals & Loops", link: "https://youtu.be/ldYLYRNaucM?t=88",
+                    subtopics: [
+                        { title: "if-else", link: "https://youtu.be/ldYLYRNaucM?t=88" },
+                        { title: "loops", link: "https://youtu.be/ldYLYRNaucM?t=440" },
+                        { title: "Switch statements", link: "https://youtu.be/mA23x39DjbI" }
+                    ]
+                },
+                { title: "Data-types", link: "https://youtu.be/TAtrPoaJ7gc?t=2800" },
+                { title: "Coding best practices", link: "https://youtu.be/waGfV-IoOt8" }
+            ]
+        },
+        {
+            title: "Functions", link: "https://youtu.be/vvanI8NRlSI",
+            subtopics: [
+                { title: "Introduction", link: "https://youtu.be/vvanI8NRlSI" },
+                { title: "Scoping in Java", link: "https://youtu.be/vvanI8NRlSI?t=2801" },
+                { title: "Shadowing", link: "https://youtu.be/vvanI8NRlSI?t=3584" },
+                { title: "Variable Length Arguments", link: "https://youtu.be/vvanI8NRlSI?t=4013" },
+                { title: "Overloading", link: "https://youtu.be/vvanI8NRlSI?t=4327" }
+            ]
+        },
+        {
+            title: "Arrays", link: "https://youtu.be/n60Dn0UsbEk",
+            subtopics: [
+                { title: "Introduction", link: "https://youtu.be/n60Dn0UsbEk" },
+                { title: "Memory management", link: "https://youtu.be/n60Dn0UsbEk?t=632" },
+                { title: "Input and Output", link: "https://youtu.be/n60Dn0UsbEk?t=1675" },
+                { title: "ArrayList Introduction", link: "https://youtu.be/n60Dn0UsbEk?t=4868" },
+                { 
+                    title: "Searching",
+                    subtopics: [
+                        { title: "Linear Search", link: "https://youtu.be/_HRA37X8N_Q" },
+                        { title: "Binary Search", link: "https://youtu.be/f6UU7V3szVw" },
+                        { title: "Modified Binary Search", link: "https://youtu.be/f6UU7V3szVw?t=2508" },
+                        { title: "Binary Search on 2D Arrays", link: "https://www.youtube.com/watch?v=enI_KyGLYPo" }
+                    ]
+                },
+                {
+                    title: "Sorting",
+                    subtopics: [
+                        { title: "Insertion Sort", link: "https://youtu.be/By_5-RRqVeE" },
+                        { title: "Selection Sort", link: "https://youtu.be/Nd4SCCIHFWk" },
+                        { title: "Bubble Sort", link: "https://youtu.be/F5MZyqRp_IM" },
+                        { title: "Cyclic Sort", link: "https://youtu.be/JfinxytTYFQ" },
+                        { title: "Count Sort", link: "https://youtu.be/FOo820lJV1Y" },
+                        { title: "Radix Sort", link: "https://youtu.be/mLi6VQDqAOs" }
+                    ]
+                }
+            ]
+        },
+        { title: "Pattern questions", link: "https://youtu.be/lsOOs5J8ycw" },
+        {
+            title: "Strings", link: "https://www.youtube.com/watch?v=zL1DPZ0Ovlo",
+            subtopics: [
+                { title: "Introduction", link: "https://www.youtube.com/watch?v=zL1DPZ0Ovlo" },
+                { title: "How Strings work", link: "https://youtu.be/zL1DPZ0Ovlo?t=216" },
+                { title: "Comparison of methods", link: "https://youtu.be/zL1DPZ0Ovlo?t=977" },
+                { title: "Operations in Strings", link: "https://youtu.be/zL1DPZ0Ovlo?t=1681" },
+                { title: "StringBuilder in Java", link: "https://youtu.be/zL1DPZ0Ovlo?t=4199" },
+                { title: "StringBuffer", link: "https://www.youtube.com/watch?v=YFZai3fPUQI" }
+            ]
+        },
+        {
+            title: "Maths for DSA", link: "https://youtu.be/fzip9Aml6og",
+            subtopics: [
+                { title: "Introduction", link: "https://youtu.be/fzip9Aml6og?t=20" },
+                { title: "Complete Bitwise Operators", link: "https://youtu.be/fzip9Aml6og?t=95" },
+                { title: "Range of numbers", link: "https://youtu.be/fzip9Aml6og?t=4169" },
+                { title: "Prime numbers", link: "https://youtu.be/lmSpZ0bjCyQ?t=57" },
+                { title: "Sieve of Eratosthenes", link: "https://youtu.be/lmSpZ0bjCyQ?t=850" },
+                { title: "Newton's Square Root Method", link: "https://youtu.be/lmSpZ0bjCyQ?t=1989" },
+                { title: "Factors", link: "https://youtu.be/lmSpZ0bjCyQ?t=3004" },
+                { title: "Modulo properties", link: "https://youtu.be/lmSpZ0bjCyQ?t=3980" },
+                { title: "Number Theory", link: "https://youtu.be/lmSpZ0bjCyQ?t=4405" },
+                { title: "HCF / LCM", link: "https://youtu.be/lmSpZ0bjCyQ?t=5110" },
+                { title: "Euclidean algorithm", link: "https://youtu.be/lmSpZ0bjCyQ?t=5520" },
+                { title: "BigInteger & BigDecimal", link: "https://www.youtube.com/watch?v=lHtoypC-4Ps" }
+            ]
+        },
+        {
+            title: "Recursion", link: "https://www.youtube.com/playlist?list=PL9gnSGHSqcnp39cTyB1dTZ2pJ04Xmdrod",
+            subtopics: [
+                { title: "Introduction", link: "https://youtu.be/M2uO2nMT0Bk" },
+                { title: "Flow of recursive programs - stacks", link: "https://youtu.be/M2uO2nMT0Bk?t=2124" },
+                { title: "Why recursion?", link: "https://youtu.be/M2uO2nMT0Bk?t=2708" },
+                { title: "Tree building of function calls", link: "https://youtu.be/M2uO2nMT0Bk?t=3033" },
+                { title: "Tail recursion", link: "https://youtu.be/M2uO2nMT0Bk?t=4308" },
+                {
+                    title: "Recursion Sorting", link: "https://www.youtube.com/playlist?list=PL9gnSGHSqcnq-9CXLt9DsInytRMLoyZQ_",
+                    subtopics: [
+                        { title: "Merge Sort", link: "https://youtu.be/iKGAgWdgoRk" },
+                        { title: "Quick Sort", link: "https://www.youtube.com/watch?v=Z8svOqamag8" }
+                    ]
+                },
+                {
+                    title: "Backtracking", link: "https://youtu.be/zg5v2rlV1tM",
+                    subtopics: [
+                        { title: "N-Queens", link: "https://youtu.be/nC1rbW2YSz0" },
+                        { title: "N-Knights", link: "https://youtu.be/nC1rbW2YSz0?t=2342" },
+                        { title: "Sudoku Solver", link: "https://youtu.be/nC1rbW2YSz0?t=3190" },
+                        { title: "Maze problems", link: "https://www.youtube.com/watch?v=zg5v2rlV1tM" }
+                    ]
+                },
+                { title: "Recursion String Problems", link: "https://youtu.be/gdifkIwCJyg" },
+                { title: "Recursion Google, Amazon Questions", link: "https://youtu.be/9ByWqPzfXDU" },
+                { title: "Recursion Array Problems", link: "https://youtu.be/sTdiMLom00U" },
+                { title: "Recursion Pattern Problems", link: "https://youtu.be/ymgnIIclCF0" },
+                { title: "Subset Questions", link: "https://youtu.be/9ByWqPzfXDU" }
+            ]
+        },
+        {
+            title: "Space and Time Complexity Analysis", link: "https://youtu.be/mV3wrLBbuuE",
+            subtopics: [
+                { title: "Introduction", link: "https://youtu.be/mV3wrLBbuuE" },
+                { title: "Comparisons of various cases", link: "https://youtu.be/mV3wrLBbuuE?t=1039" },
+                { title: "Solving Linear Recurrence Relations", link: "https://youtu.be/mV3wrLBbuuE?t=6252" },
+                { title: "Solving Divide and Conquer Recurrence Relations", link: "https://youtu.be/mV3wrLBbuuE?t=4609" },
+                { title: "Big-O, Big-Omega, Big-Theta Notations", link: "https://youtu.be/mV3wrLBbuuE?t=2271" },
+                { title: "Little Notations", link: "https://youtu.be/mV3wrLBbuuE?t=2960" },
+                { title: "Get equation of any relation easily", link: "https://youtu.be/mV3wrLBbuuE?t=8189" },
+                { title: "Complexity discussion", link: "https://youtu.be/mV3wrLBbuuE?t=3866" },
+                { title: "Space Complexity", link: "https://youtu.be/mV3wrLBbuuE?t=3330" },
+                { title: "NP-Completeness Introduction", link: "https://youtu.be/mV3wrLBbuuE?t=8695" }
+            ]
+        },
+        {
+            title: "Object Oriented Programming", link: "https://www.youtube.com/playlist?list=PL9gnSGHSqcno1G3XjUbwzXHL8_EttOuKk",
+            subtopics: [
+                { title: "Introduction", link: "https://www.youtube.com/watch?v=BSVKUk58K6U" },
+                { title: "Classes & its instances", link: "https://youtu.be/BSVKUk58K6U?t=467" },
+                { title: "this keyword in Java", link: "https://youtu.be/BSVKUk58K6U?t=3380" },
+                { 
+                    title: "Properties", link: "https://www.youtube.com/watch?v=46T2wD3IuhM",
+                    subtopics: [
+                        { title: "Inheritance", link: "https://youtu.be/46T2wD3IuhM?t=146" },
+                        { title: "Abstraction", link: "https://youtu.be/46T2wD3IuhM?t=7102" },
+                        { title: "Polymorphism", link: "https://youtu.be/46T2wD3IuhM?t=4226" },
+                        { title: "Encapsulation", link: "https://youtu.be/46T2wD3IuhM?t=7022" }
+                    ]
+                },
+                { title: "Overloading & Overriding", link: "https://youtu.be/46T2wD3IuhM?t=4834" },
+                { title: "Static & Non-Static", link: "https://youtu.be/_Ya6CN13t8k?t=1137" },
+                { title: "Packages", link: "https://youtu.be/_Ya6CN13t8k?t=182" },
+                { title: "Access Control", link: "https://youtu.be/W145DXs8fFg" },
+                { title: "Interfaces", link: "https://youtu.be/rgHZa7-Dibg?t=1510" },
+                { title: "Abstract Classes", link: "https://youtu.be/rgHZa7-Dibg?t=68" },
+                { title: "Annotations", link: "https://youtu.be/rgHZa7-Dibg?t=3438" },
+                { title: "Singleton Class", link: "https://youtu.be/_Ya6CN13t8k?t=4240" },
+                { title: "final, finalize, finally", link: "https://youtu.be/46T2wD3IuhM?t=6317" },
+                { title: "Object Cloning", link: "https://youtu.be/OY2lPr8h93U?t=4352" },
+                { title: "Object Class", link: "https://youtu.be/W145DXs8fFg?t=1943" },
+                { title: "Generics", link: "https://www.youtube.com/watch?v=OY2lPr8h93U" },
+                { title: "Exception Handling", link: "https://youtu.be/OY2lPr8h93U?t=3405" },
+                { title: "Collections Framework", link: "https://youtu.be/9ogGan-R1pc?t=49" },
+                { title: "Vector Class", link: "https://youtu.be/9ogGan-R1pc?t=668" },
+                { title: "Lambda Expression", link: "https://youtu.be/OY2lPr8h93U?t=2894" },
+                { title: "Enums", link: "https://youtu.be/9ogGan-R1pc?t=909" }
+            ]
+        },
+        {
+            title: "Linked List", link: "https://youtu.be/58YbpRDc4yw",
+            subtopics: [
+                { title: "Introduction", link: "https://youtu.be/58YbpRDc4yw" },
+                { title: "Singly + Doubly + Circular LinkedList", link: "https://youtu.be/58YbpRDc4yw" },
+                { title: "Fast and slow pointer", link: "https://youtu.be/70tx7KcMROc" },
+                { title: "Cycle Detection", link: "https://youtu.be/70tx7KcMROc" },
+                { title: "Reversal of LinkedList", link: "https://youtu.be/70tx7KcMROc" },
+                { title: "Linked List + Recursion", link: "https://youtu.be/70tx7KcMROc" }
+            ]
+        },
+        {
+            title: "Stacks & Queues", link: "https://www.youtube.com/watch?v=rHQI4mrJ3cg",
+            subtopics: [
+                { title: "Introduction" },
+                { title: "Push efficient" },
+                { title: "Pop efficient" },
+                { title: "Queue using Stack" },
+                { title: "Circular Queue" },
+                { title: "Interview problems", link: "https://www.youtube.com/watch?v=S9LUYztYLu4" }
+            ]
+        },
+        { title: "File handling", link: "https://www.youtube.com/watch?v=b35mlSPOlJg" },
+        {
+            title: "Trees", link: "https://www.youtube.com/playlist?list=PL9gnSGHSqcnqfctdbCQKaw5oZ9Up2cmsq",
+            subtopics: [
+                { title: "Introduction", link: "https://www.youtube.com/watch?v=4s1Tcvm00pA" },
+                { title: "Binary Trees" },
+                { title: "Binary Search Trees" },
+                { 
+                    title: "Interview questions", link: "https://www.youtube.com/watch?v=9D-vP-jcc-Y",
+                    subtopics: [
+                        {title: "DFS"},
+                        {title: "BFS"}
+                    ]
+                },
+                { title: "AVL Trees", link: "https://www.youtube.com/watch?v=CVA85JuJEn0" },
+                { title: "Segment Tree", link: "https://www.youtube.com/watch?v=ciHThtTVNto" },
+                { title: "Fenwick Tree / BIT" }
+            ]
+        },
+        {
+            title: "Heaps", link: "https://youtu.be/Qf-TDPr0nYw",
+            subtopics: [
+                { title: "Introduction", link: "https://youtu.be/Qf-TDPr0nYw" },
+                { title: "Two Heaps Method" },
+                { title: "k-way merge" },
+                { title: "Top k elements" },
+                { title: "Interval problems" }
+            ]
+        },
+        {
+            title: "HashMap", link: "https://youtu.be/XLbvmMz8Fr8",
+            subtopics: [
+                { title: "Introduction", link: "https://youtu.be/XLbvmMz8Fr8" },
+                { title: "Theory - how it works" },
+                { title: "Comparisons of various forms" },
+                { title: "Limitations and how to solve" },
+                { title: "Map using LinkedList" },
+                { title: "Map using Hash" },
+                { title: "Chaining" },
+                { title: "Probing" },
+                { title: "Huffman Coding", link: "https://youtu.be/XLfgeaYHinM" },
+                { title: "Karp-Rabin String matching algorithm", link: "https://youtu.be/swciWFPq3NE" }
+            ]
+        },
+        { title: "Subarray Questions: Sliding window, Two Pointer" },
+        {
+            title: "Graphs",
+            subtopics: [
+                { title: "Introduction" },
+                { title: "BFS" },
+                { title: "DFS" },
+                { title: "Minimum Spanning Trees" },
+                { title: "Kruskal Algorithm" },
+                { title: "Prims Algorithm" },
+                { title: "Dijkstra’s Algo" },
+                { title: "Topological Sort" },
+                { title: "Bellman ford" },
+                { title: "A* pathfinding" }
+            ]
+        },
+        {
+            title: "Dynamic Programming",
+            subtopics: [
+                { title: "Introduction" },
+                { title: "0/1 Knapsack" },
+                { title: "Subset Questions" },
+                { title: "Unbounded Knapsack" },
+                { title: "Subsequence questions" },
+                { title: "String DP" }
+            ]
+        },
+        { title: "Greedy Algorithms" },
+        { title: "Tries" },
+        {
+            title: "Advanced Concepts",
+            subtopics: [
+                { title: "Bitwise + DP" },
+                { title: "Extended Euclidean algorithm" },
+                { title: "Modulo Multiplicative Inverse" },
+                { title: "Linear Diophantine Equations" },
+                { title: "Matrix Exponentiation" },
+                { title: "Mathematical Expectation" },
+                { title: "Catalan Numbers" },
+                { title: "Fermat’s Theorem" },
+                { title: "Wilson's Theorem" },
+                { title: "Euler's Theorem" },
+                { title: "Lucas Theorem" },
+                { title: "Chinese Remainder Theorem" },
+                { title: "Euler Totient" },
+                { title: "NP-Completeness" },
+                { title: "Multithreading" },
+                { title: "Square Root Decomposition" }
+            ]
+        }
+    ];
+
+    // State Management
+    let completedItems = new Set();
+    const STORAGE_KEY = 'dsa_tracker_progress';
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProgress();
+        renderSyllabus(syllabusData, document.getElementById('syllabus-root'));
+        updateProgressUI();
+        loadTheme();
+        
+        // Set initial max-height for all sections
+        setTimeout(() => {
+            document.querySelectorAll('.section-content').forEach(content => {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            });
+        }, 100);
+    });
+
+    // Recursively render the syllabus list
+    function renderSyllabus(data, container, parentIndex = '') {
+        data.forEach((item, index) => {
+            const uniqueId = parentIndex ? `${parentIndex}-${index}` : `${index}`;
+            
+            // Create section wrapper for main topics (no parent)
+            if (!parentIndex) {
+                const section = document.createElement('div');
+                section.className = 'section';
+                
+                // Section header
+                const header = document.createElement('div');
+                header.className = 'section-header';
+                header.onclick = () => toggleSection(section);
+                
+                const title = document.createElement('div');
+                title.className = 'section-title';
+                title.textContent = item.title;
+                
+                const toggle = document.createElement('div');
+                toggle.className = 'section-toggle';
+                toggle.textContent = '▼';
+                
+                header.appendChild(title);
+                header.appendChild(toggle);
+                section.appendChild(header);
+                
+                // Section content
+                const content = document.createElement('div');
+                content.className = 'section-content';
+                
+                // Main topic checkbox and link
+                const mainTopic = createTopicElement(item, uniqueId);
+                content.appendChild(mainTopic);
+                
+                // Subtopics
+                if (item.subtopics && item.subtopics.length > 0) {
+                    const ul = document.createElement('ul');
+                    renderSubtopics(item.subtopics, ul, uniqueId);
+                    content.appendChild(ul);
+                }
+                
+                section.appendChild(content);
+                container.appendChild(section);
+            }
+        });
+    }
+    
+    function renderSubtopics(data, container, parentIndex) {
+        data.forEach((item, index) => {
+            const uniqueId = `${parentIndex}-${index}`;
+            const li = createTopicElement(item, uniqueId);
+            
+            if (item.subtopics && item.subtopics.length > 0) {
+                const ul = document.createElement('ul');
+                renderSubtopics(item.subtopics, ul, uniqueId);
+                li.appendChild(ul);
+            }
+            
+            container.appendChild(li);
+        });
+    }
+    
+    function createTopicElement(item, uniqueId) {
+        const li = document.createElement('li');
+        li.className = 'topic-item';
+        
+        const isChecked = completedItems.has(uniqueId);
+        if(isChecked) li.classList.add('completed');
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'topic-content';
+
+        const leftDiv = document.createElement('div');
+        leftDiv.className = 'topic-left';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `cb-${uniqueId}`;
+        checkbox.checked = isChecked;
+        checkbox.onchange = (e) => toggleItem(uniqueId, e.target.checked);
+
+        const label = document.createElement('label');
+        label.htmlFor = `cb-${uniqueId}`;
+        label.textContent = item.title;
+
+        leftDiv.appendChild(checkbox);
+        leftDiv.appendChild(label);
+        contentDiv.appendChild(leftDiv);
+        
+        if (item.link) {
+            const link = document.createElement('a');
+            link.href = item.link;
+            link.target = "_blank";
+            link.className = 'video-link';
+            // Shorter text for mobile
+            link.textContent = window.innerWidth <= 480 ? 'Watch' : 'Watch Video';
+            contentDiv.appendChild(link);
+        }
+
+        li.appendChild(contentDiv);
+        return li;
+    }
+
+    // Toggle Checkbox logic
+    function toggleItem(id, isChecked) {
+        if (isChecked) {
+            completedItems.add(id);
+            document.getElementById(`cb-${id}`).closest('.topic-item').classList.add('completed');
+        } else {
+            completedItems.delete(id);
+            document.getElementById(`cb-${id}`).closest('.topic-item').classList.remove('completed');
+        }
+        saveProgress();
+        updateProgressUI();
+    }
+
+    // Progress Bar Logic
+    function updateProgressUI() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const total = checkboxes.length;
+        const checked = completedItems.size;
+        
+        const percentage = total === 0 ? 0 : Math.round((checked / total) * 100);
+        
+        document.getElementById('progressBar').style.width = `${percentage}%`;
+        document.getElementById('progressText').textContent = `${percentage}% Completed (${checked}/${total})`;
+    }
+
+    // Local Storage Saving
+    function saveProgress() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([...completedItems]));
+    }
+
+    function loadProgress() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            completedItems = new Set(JSON.parse(saved));
+        }
+    }
+
+    // File Export/Import Logic
+    function exportProgress() {
+        const data = JSON.stringify([...completedItems]);
+        const blob = new Blob([data], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'dsa-progress.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    function importProgress(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const loadedData = JSON.parse(e.target.result);
+                completedItems = new Set(loadedData);
+                saveProgress();
+                location.reload(); // Reload to refresh checkboxes
+            } catch (err) {
+                alert("Invalid file format");
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    // Theme Logic
+    function toggleTheme() {
+        const body = document.body;
+        const isDark = body.getAttribute('data-theme') === 'dark';
+        
+        if (isDark) {
+            body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+
+    function loadTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        }
+    }
+    
+    // Section collapse/expand functionality
+    function toggleSection(section) {
+        const content = section.querySelector('.section-content');
+        const toggle = section.querySelector('.section-toggle');
+        
+        if (content.classList.contains('collapsed')) {
+            content.classList.remove('collapsed');
+            content.style.maxHeight = content.scrollHeight + 'px';
+            toggle.textContent = '▼';
+        } else {
+            content.classList.add('collapsed');
+            content.style.maxHeight = '0';
+            toggle.textContent = '▶';
+        }
+    }
+    
+    let allCollapsed = false;
+    function toggleAllSections() {
+        const sections = document.querySelectorAll('.section');
+        const button = event.target;
+        
+        sections.forEach(section => {
+            const content = section.querySelector('.section-content');
+            const toggle = section.querySelector('.section-toggle');
+            
+            if (allCollapsed) {
+                content.classList.remove('collapsed');
+                content.style.maxHeight = content.scrollHeight + 'px';
+                toggle.textContent = '▼';
+            } else {
+                content.classList.add('collapsed');
+                content.style.maxHeight = '0';
+                toggle.textContent = '▶';
+            }
+        });
+        
+        allCollapsed = !allCollapsed;
+        button.textContent = allCollapsed ? 'Expand All' : 'Collapse All';
+    }
+</script>
+
+</body>
+</html>
